@@ -60,6 +60,10 @@ cd torchcdc && python3 test_torchcdc.py   # the harness battery
 cd native  && ./verify_gist.sh            # the whole native gate
 ```
 
+> **Note on the language bar:** GitHub labels `.cdc` files as "Cadence" (an
+> unrelated language sharing the extension). Every `.cdc` file here is BiDi
+> Coherence-Delta Calculus source — the mechanism itself.
+
 ## Lineage
 
 GIST is the first CDC-native system: the
