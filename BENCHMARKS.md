@@ -23,9 +23,9 @@ reduction and are baked into the committed datasets
 
 | measurement | value |
 |---|---|
-| inference latency (`infer`, full process spawn incl. parse) | 2.78 ms/call (1000 calls in 2.78s) |
+| inference latency (`infer`, full process spawn incl. parse) | 2.68 ms/call (1000 calls in 2.68s) |
 | native training, 400 scenes x 10 epochs + 11 evals | 0.04s |
-| full verification gate (`verify_gist.sh`: all runtime jobs + contract) | 0.15s |
+| full verification gate (`verify_gist.sh`: all runtime jobs + contract) | 0.14s |
 
 ## Reference experiments (construction-tier, code not shipped)
 

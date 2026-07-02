@@ -1,6 +1,9 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="GIST" width="230">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+  <img src="assets/logo.svg" alt="GIST" width="250">
+</picture>
 
 # GIST
 
@@ -15,10 +18,11 @@ and trainable as the neural network it already is.*
 [![trained natively](https://img.shields.io/badge/trained_natively-0.933_held--out-orange)](BENCHMARKS.md)
 [![substrate](https://img.shields.io/badge/substrate-BiDi_CDC-black)](https://github.com/ETEllis/bidi-coherence-delta-calculus)
 
-<sub>*The mark is the mechanism: Sierpinski's triangle as the network's
-convolution filters — the lines are the flow, the open corner is the
-output aperture (the balanced-ternary `0`), and the gold point is the
-committed verdict at the end of the reduction.*</sub>
+<sub>*The mark is the mechanism: Sierpinski recursion as the network's
+convolution filters, the golden trace a signal refracting nonlinearly
+through each triangle pass, the quasicrystal twist the facet structure of
+the lattice — and the open corner the output aperture (the
+balanced-ternary `0`), condensing to one committed point.*</sub>
 
 </div>
 
