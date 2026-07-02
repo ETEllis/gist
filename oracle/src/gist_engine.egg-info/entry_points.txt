@@ -1,0 +1,2 @@
+[console_scripts]
+gist = gist_engine.cli:main

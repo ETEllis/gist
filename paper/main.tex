@@ -1,0 +1,273 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{microtype}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,citecolor=blue!50!black}
+
+\title{GIST: A Gated Insight Synthesis Topology,\\
+Native in a Coherence Calculus and Trainable as the\\
+Recurrent State-Space/Convolutional Hybrid It Already Is}
+\author{Edward Ellis\\
+\small\texttt{github.com/ETEllis/bidi-coherence-delta-calculus} (substrate)}
+\date{July 2, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+GIST (Gated Insight Synthesis Topology) is a synthesis mechanism for
+evidence-bearing reasoning: claims decompose into a 64-slot lattice
+($2^6{=}4^3$), evidence superposes as phases, a corefold pyramid distills
+each scope's triad to a singular conclusion, and a guarded
+\emph{balanced-ternary commit} quantizes it---$+$ asserted, $-$ opposed,
+$0$ a live open aperture---behind a barrier that holds contradiction-debt
+rather than latching it. We present GIST built \emph{entirely} out of the
+BiDi Coherence-Delta Calculus (CDC): the shipped mechanism is native
+\texttt{.cdc} source executed by CDC's existing C micro-bridge with zero
+host code of its own (machine-checked \texttt{host-debt 0}; 83/83 contract
+expectations; 70 native witnesses). Pearl's do-operator requires no new
+primitive: an intervention is a latched cell plus a severed inbound
+channel, and we exhibit necessity, sufficiency-restoration, backdoor
+severance, and frontdoor mediation as runtime-checked twin-field programs.
+We then observe that the mechanism's forward dynamics already constitute a
+neural architecture---a selective nonlinear state-space recurrence
+(Kuramoto phase turn) over SO(2)-weighted graph convolutions with a ternary
+bottleneck and hypercube pooling---and train that hybrid (109 parameters)
+against labels produced by the native runtime itself. Initialized
+\emph{at the calculus}, it reaches $0.984$ slot accuracy and $0.868$
+global-verdict accuracy on held-out 64-slot scenes (majority baselines
+$0.661/0.532$), and the trained weights export back to \texttt{.cdc},
+where the same C runtime reproduces the model's conclusions on all 27
+ternary inputs ($27/27$ parity). Learning itself is shown native: the
+runtime now executes CDC's declared Hebbian plasticity as part of flow.
+\end{abstract}
+
+\section{Introduction: GIST before any neural network}
+
+GIST is, at its conceptual base, a discipline for concluding under
+evidence: (i)~\emph{scope} every question into a finite lattice of
+micro-scopes; (ii)~\emph{superpose} evidence within each scope so that
+agreement reinforces and contradiction cancels; (iii)~\emph{distill}
+each scope's evidence triad through a fixed pyramid ($3{\to}2{\to}1$)
+into a singular conclusion; (iv)~\emph{commit} conclusions only through
+guards---a nonnegative-balance barrier over the committed word (leading
+contradiction is debt and \emph{holds} with attribution rather than
+latching) and an energy guard (a commit may not increase the scope's
+variational potential); (v)~\emph{gate} any release of a synthesis on
+coverage, parity, stability, counterfactual survival, causal lift,
+global agreement, and retrieval saturation; and (vi)~\emph{reduce}
+the lattice through a Hamming ladder whose reduction tree doubles as a
+Merkle verification tree, ending in a council-reconciled, stamped
+decision. The balanced-ternary middle value is load-bearing: $0$ is a
+live crossing---``still open, contribute evidence''---not falsehood,
+giving the mechanism a first-class state that language models
+notoriously lack.
+
+This paper reports GIST's construction \emph{from first principles}
+inside an existing formal substrate, and the consequence that follows:
+the mechanism is already a neural network, and can be trained as one
+without leaving its own semantics.
+
+\section{The substrate: BiDi Coherence-Delta Calculus}
+
+CDC~\cite{bidi} is a native-language/kernel pair whose carrier is a
+coherence algebra $\mathcal{C}=(C,\boxplus,\bot,\circlearrowright,
+|{\cdot}|,\kappa)$ (standard model $C=\mathbb{R}^2$): superposition,
+rotation, amplitude, and a commitment cosine $\kappa\in[-1,1]$ from which
+the balanced trit is \emph{derived} with deadband $\delta=\tfrac12$:
+$\tau=+1$ if $\kappa>\delta$, $-1$ if $\kappa<-\delta$, else $0$; boundary
+openness $\varkappa=\max(0,1-|\kappa|/\delta)$ is maximal at the crossing.
+Fields of phase-cells in bounded modules evolve by continuous \emph{flow}
+(phase turns toward the afferent superposition) and discrete guarded
+\emph{commit} (quantize, barrier, belief step, energy guard, latch), with
+\emph{nest} exchanging child coherence upward and context downward. The
+finite $n{=}6$ commit spectrum---$729$ words, $267$ admissible, $51$
+localized (Motzkin), $20$ saturated, $5$ Catalan---is machine-checked and
+grounds GIST's release tiers. The dyadic/triadic bridge
+($2^6{=}4^3{=}64$) supplies GIST's address system.
+
+GIST rides CDC \emph{subordinately}: seven declaration files
+(\texttt{gist.cdc}, laws, lattice, pyramid, counterfactuals,
+gate, ladder, learning, neural) are executed and checked by CDC's own C
+runtime and Python bootloader. The kernel contract asserts
+\texttt{host-debt <= 0} and the verification gate confirms 83/83
+expectations with 70 native witnesses. GIST is, to our knowledge, the
+first CDC-first system: the calculus describing a mechanism which the
+calculus's own bridge then executes, verifies, and (below) learns.
+
+\section{The do-operator without a new primitive}
+
+A CDC channel graph \emph{is} a structural causal model, so Pearl's
+surgery~\cite{pearl} decomposes into two native acts: \emph{latch} the
+intervened cell at its pole and \emph{sever} its inbound channels. The
+counterfactual twin is a second field sharing initial conditions. Four
+runtime-checked programs exhibit the ladder of causation natively:
+
+\begin{itemize}
+\item \textbf{Necessity} (\texttt{gist\_cf.cdc}): the factual field
+commits the conclusion $+$; under $do(r_0{:=}-)$ the twin dissolves it to
+the crossing---$r_0$ is load-bearing.
+\item \textbf{Sufficiency-restoration}: a contested conclusion (word
+\texttt{+-0}) is restored to $+$ by latching the opposing root.
+\item \textbf{Backdoor severance}: a confounder co-moves $x$ and $y$
+(word \texttt{+++}); $do(x{:=}-)$ with the backdoor severed yields only
+\texttt{+-0}---the association overstates the causal effect.
+\item \textbf{Frontdoor mediation}: with the confounder still supporting
+$y$, $do(m{:=}-)$ on the mediator alone dissolves the conclusion,
+isolating the mediated path.
+\end{itemize}
+
+Every expected phase and committed word in these files is checked by the
+C runtime to $10^{-5}$. A companion reference implementation carries the
+distributional layer (d-separation, do-calculus rules~1--3 as executable
+rewrites, backdoor/frontdoor identification with honest refusal and
+positivity attribution, exact abduction/PN/PS over the enumerable ternary
+exogenous space) with $16/16$ suites passing, including exact agreement
+between identified estimands and surgical ground truth across random
+ternary SCMs.
+
+\section{The hybrid: the network the mechanism already is}
+
+Read as dynamics, GIST's forward pass is a neural architecture in the
+precise, modern sense:
+
+\begin{itemize}
+\item \textbf{Recurrent nonlinear state space.} The flow step
+$\Delta\theta_i=g\,\mathrm{Im}(A_ie^{-i\theta_i})$ (Kuramoto
+turn~\cite{kuramoto}) is a recurrence whose coupling is state-dependent
+---the selectivity that distinguishes modern SSMs~\cite{s4,mamba} arises
+here from phase geometry itself.
+\item \textbf{Convolutional filtration.} Two weight-shared graph
+convolutions: the corefold pyramid inside every slot (six edge-type
+filters), and a Hamming-1 lattice convolution on the $B$-cube (one SO(2)
+filter per cube direction). Channels with weight $w$ and angle $\alpha$
+are exactly the blocks $w\!\left[\begin{smallmatrix}\cos\alpha &
+-\sin\alpha\\ \sin\alpha & \cos\alpha\end{smallmatrix}\right]$.
+\item \textbf{Gating.} A learnable openness gate
+$\sigma(\beta(|\kappa|-\delta))$ scales each cell's outbound influence:
+decisive cells transmit, crossings attenuate---the calculus's aperture as
+a trainable gate.
+\item \textbf{Balanced-ternary bottleneck.} The commit quantizer with a
+straight-through gradient; activations end as $\{-,0,+\}$ words behind
+the same deadband the mechanism uses (cf.\ ternary-weight
+LLMs~\cite{bitnet}, here as \emph{semantic} quantization).
+\item \textbf{Ladder pooling.} $B$ hypercube contractions with a shared
+alignment rotation per round pool $2^B$ slot singulars to one global
+state.
+\end{itemize}
+
+\paragraph{Native supervision.} Training data is labeled by the
+mechanism itself: scenes compile to \texttt{.cdc} batch programs
+(evidence mass folded into channel weights, matching the runtime's
+phase-only coupling), the C runtime commits them, and the committed words
+are the labels---negatives via the mirror rule (the barrier is
+assertion-leading, so ``no'' is a gated ``yes'' on the mirrored field).
+
+\paragraph{Initialize at the calculus, train to anticipate.} The
+provably-equivalent GIST-NN point (exact corefold weights, neutral
+angles, unit gain) is the initialization; training then learns to
+anticipate the \emph{converged} native reduction from $K{=}4$ recurrent
+steps.
+
+\begin{table}[t]
+\centering
+\caption{Held-out results, 64-slot lattice (109 parameters; numpy on one
+CPU; 46 epochs chosen by early stopping). Majority baselines: slot
+$0.661$, global $0.532$.}
+\begin{tabular}{lccc}
+\toprule
+ & slot acc. & slot macro-F1 & global verdict acc.\\
+\midrule
+calculus init (untrained) & 0.785 & 0.644 & 0.540\\
+trained & \textbf{0.984} & \textbf{0.980} & \textbf{0.868}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Ablations (8-slot lattice, same protocol).}
+\begin{tabular}{lcc}
+\toprule
+variant & slot acc. & global acc.\\
+\midrule
+full hybrid, calculus init & 0.951 & \textbf{0.840}\\
+random init & 0.968 & 0.750\\
+no lattice convolution & \textbf{0.987} & 0.775\\
+no openness gating & 0.984 & 0.745\\
+no ternary bottleneck & 0.953 & 0.825\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ablations localize the contributions: slot-level accuracy is carried
+by the pyramid recurrence (removing lattice coupling even helps locally),
+while the \emph{global verdict}---the judgment GIST exists to gate---is
+best served by the full hybrid with calculus initialization; random
+initialization and ablated gating cost $9$ and $9.5$ points of global
+accuracy respectively.
+
+\paragraph{Deployment closes the loop.} A parity-mode variant (gating
+off, amplitude-blind, matching the C runtime's flow exactly) trains to
+$0.985$ slot accuracy and exports its weights as a \texttt{.cdc} program;
+\texttt{cdc\_native\_runtime infer} then reproduces the trained model's
+singular conclusion on \emph{all} 27 ternary input words ($27/27$).
+The same runtime that verifies the mechanism runs the trained model:
+\texttt{./run.sh '+0-'}.
+
+\paragraph{Learning is native.} The runtime extension also executes CDC's
+declared plasticity: channels marked \texttt{plastic} follow phase
+correlation through flow ($w\mathrel{+}=r(\cos(\theta_{src}{-}
+\theta_{dst})-w)\,d$), witnessed by \texttt{gist\_learn.cdc} (a weak
+channel learns an alignment, $0.10\to0.76$ in two steps, to $10^{-5}$).
+Gradient training is thus a harness-side refinement of a capacity the
+substrate itself possesses.
+
+\section{Adapters and integration surfaces}
+
+The reference tier exposes the mechanism to hosts: a one-call ternary
+verdict bridge (\texttt{yes}/\texttt{no}/\texttt{maybe} $=$ the carrier,
+with ``maybe'' returning the asks that would settle it, and ``no''
+derived Pearl-symmetrically via the mirrored session), an MCP server, an
+architecture-agnostic tool-call spec, and a reasoning-loop stitcher that
+feeds a model's chain of thought through the lattice and injects the live
+field state back into context. The reference engine is replay-verifiable
+end-to-end (hash-chained ledgers, Merkle-rooted reductions, HKDF/HMAC
+decision stamps) and carries a 100-test suite plus a 36-witness contract
+of its own. A separate execution plan documents training the discipline
+into open-weight LLMs with the native runtime as the (near-free) RL
+reward function.
+
+\section{Reproducibility and limitations}
+
+Everything reported here reruns from the repository:
+\texttt{native/verify\_gist.sh} (the whole native gate),
+\texttt{torchcdc/train.py} (datasets, training, ablations, export,
+parity; $\sim$6 minutes on one CPU), \texttt{torchcdc/test\_torchcdc.py},
+and \texttt{./run.sh}. Determinism is by construction (hash-derived
+streams; no wall clock in semantics). Limitations: the hybrid is small by
+design (the point is the isomorphism and the closed loop, not scale);
+the native runtime's flow is phase-only (amplitude semantics are folded
+into weights at compilation, documented); identification tiers beyond
+backdoor/frontdoor (Shpitser--Pearl ID) remain reference-tier work; and
+the LLM translation is a designed protocol, not yet an executed run.
+
+\begin{thebibliography}{9}
+\bibitem{bidi} E.~Ellis. \emph{BiDi Coherence-Delta Calculus} (v0.2.4).
+\url{https://github.com/ETEllis/bidi-coherence-delta-calculus}, 2026.
+\bibitem{pearl} J.~Pearl. \emph{Causality: Models, Reasoning, and
+Inference}. Cambridge University Press, 2nd ed., 2009.
+\bibitem{kuramoto} Y.~Kuramoto. \emph{Chemical Oscillations, Waves, and
+Turbulence}. Springer, 1984.
+\bibitem{s4} A.~Gu, K.~Goel, C.~R\'e. Efficiently modeling long sequences
+with structured state spaces. \emph{ICLR}, 2022.
+\bibitem{mamba} A.~Gu, T.~Dao. Mamba: Linear-time sequence modeling with
+selective state spaces. \emph{arXiv:2312.00752}, 2023.
+\bibitem{bitnet} S.~Ma et al. The era of 1-bit LLMs: All large language
+models are in 1.58 bits. \emph{arXiv:2402.17764}, 2024.
+\end{thebibliography}
+
+\end{document}
