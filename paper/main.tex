@@ -89,9 +89,10 @@ localized (Motzkin), $20$ saturated, $5$ Catalan---is machine-checked and
 grounds GIST's release tiers. The dyadic/triadic bridge
 ($2^6{=}4^3{=}64$) supplies GIST's address system.
 
-GIST rides CDC \emph{subordinately}: seven declaration files
-(\texttt{gist.cdc}, laws, lattice, pyramid, counterfactuals,
-gate, ladder, learning, neural) are executed and checked by CDC's own C
+GIST rides CDC \emph{subordinately}: its declaration files
+(\texttt{gist.cdc}, laws, lattice, pyramid, counterfactuals, gate,
+ladder, learning, neural, the training net, and the \texttt{.cdc}
+datasets and learned weights) are executed and checked by CDC's own C
 runtime and Python bootloader. The kernel contract asserts
 \texttt{host-debt <= 0} and the verification gate confirms 83/83
 expectations with 70 native witnesses. GIST is, to our knowledge, the
