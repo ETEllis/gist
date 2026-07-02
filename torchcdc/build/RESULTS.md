@@ -34,7 +34,7 @@ Global verdict confusion (rows = truth no/maybe/yes):
 
 ## Deployment (single-slot, C-parity mode)
 
-Trained slot accuracy 0.9846; exported to `gist_hybrid.cdc`;
+Trained slot accuracy 0.9901; exported to `gist_hybrid.cdc`;
 **native parity 27/27** - the exported `.cdc` reproduces the
 trained model's singular trit under `cdc_native_runtime infer` on every one
 of the 27 ternary input words.

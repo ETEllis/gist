@@ -15,12 +15,12 @@ if [ $# -eq 0 ]; then
   exec "$HERE/native/verify_gist.sh"
 fi
 WORD="$1"
-OUT="$("$RT" infer "$HERE/torchcdc/build/gist_hybrid.cdc" net "$WORD")"
+OUT="$("$RT" infer "$HERE/torchcdc/build/gist_hybrid.cdc" net "$WORD" net.c4)"
 echo "$OUT"
 VERDICT="$(echo "$OUT" | tr ' ' '\n' | grep '^verdict=' | cut -d= -f2)"
 if [ "$VERDICT" = "maybe" ]; then
   MIRROR="$(echo "$WORD" | tr '+-' '-+')"
-  MOUT="$("$RT" infer "$HERE/torchcdc/build/gist_hybrid.cdc" net "$MIRROR")"
+  MOUT="$("$RT" infer "$HERE/torchcdc/build/gist_hybrid.cdc" net "$MIRROR" net.c4)"
   MV="$(echo "$MOUT" | tr ' ' '\n' | grep '^verdict=' | cut -d= -f2)"
   if [ "$MV" = "yes" ]; then
     echo "mirror($MIRROR) -> yes  =>  final verdict: no"

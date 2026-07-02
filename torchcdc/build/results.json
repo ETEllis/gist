@@ -1583,8 +1583,8 @@
    "score": 0.6703
   },
   "trained": {
-   "slot_acc": 0.9846,
-   "slot_macro_f1": 0.9804,
+   "slot_acc": 0.9901,
+   "slot_macro_f1": 0.9875,
    "global_acc": 0.7297,
    "global_confusion": [
     [
@@ -1603,9 +1603,9 @@
      123
     ]
    ],
-   "score": 0.8571
+   "score": 0.8599
   },
-  "epochs_run": 34,
+  "epochs_run": 56,
   "native_parity": "27/27",
   "parity_detail": [
    {
@@ -1617,7 +1617,7 @@
    {
     "input": "++0",
     "python_singular": 1,
-    "native_word": "++0+++",
+    "native_word": "++0++0",
     "match": true
    },
    {
@@ -1634,8 +1634,8 @@
    },
    {
     "input": "+00",
-    "python_singular": 0,
-    "native_word": "+00+00",
+    "python_singular": 1,
+    "native_word": "+00++0",
     "match": true
    },
    {
@@ -1647,7 +1647,7 @@
    {
     "input": "+-+",
     "python_singular": 0,
-    "native_word": "+-+000",
+    "native_word": "+-+00+",
     "match": true
    },
    {
@@ -1671,7 +1671,7 @@
    {
     "input": "0+0",
     "python_singular": 1,
-    "native_word": "0+0+++",
+    "native_word": "0+0++0",
     "match": true
    },
    {
@@ -1700,8 +1700,8 @@
    },
    {
     "input": "0-+",
-    "python_singular": -1,
-    "native_word": "0-+--0",
+    "python_singular": 0,
+    "native_word": "0-+-0+",
     "match": true
    },
    {
@@ -1725,7 +1725,7 @@
    {
     "input": "-+0",
     "python_singular": 0,
-    "native_word": "-+000+",
+    "native_word": "-+0000",
     "match": true
    },
    {
@@ -1736,14 +1736,14 @@
    },
    {
     "input": "-0+",
-    "python_singular": -1,
-    "native_word": "-0+--+",
+    "python_singular": 0,
+    "native_word": "-0+-0+",
     "match": true
    },
    {
     "input": "-00",
-    "python_singular": -1,
-    "native_word": "-00--0",
+    "python_singular": 0,
+    "native_word": "-00-00",
     "match": true
    },
    {
@@ -1755,7 +1755,7 @@
    {
     "input": "--+",
     "python_singular": -1,
-    "native_word": "--+--0",
+    "native_word": "--+--+",
     "match": true
    },
    {
@@ -1772,7 +1772,15 @@
    }
   ],
   "cdc": "gist_hybrid.cdc",
-  "pole_word_oracle_agreement": "27/27"
+  "pole_word_oracle_agreement": "27/27",
+  "steps": 6,
+  "head_oracle_agreement": "27/27",
+  "raw_singular_oracle_agreement": "25/27",
+  "knife_edge_misses": [
+   "+00",
+   "0+-"
+  ],
+  "note": "the two raw-singular misses are the maximally-contested mirror pair; the converged oracle resolves them to the crossing while K-step anticipation lands ~0.03 past the deadband - the feature head resolves all 27"
  },
  "wall_seconds": 351.5
 }

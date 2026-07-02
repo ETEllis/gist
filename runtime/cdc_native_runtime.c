@@ -1693,7 +1693,7 @@ static void run_replay(const char *reducer_path, const char *surface_path) {
 }
 
 static void run_infer(Runtime *rt, const char *path, const char *module_name,
-                      const char *input_word) {
+                      const char *input_word, const char *conclusion_cell) {
     Module *module = find_module(rt, module_name);
     int module_cells[MAX_CELLS];
     int module_cell_count = 0;
@@ -1756,7 +1756,22 @@ static void run_infer(Runtime *rt, const char *path, const char *module_name,
         head.expect_reason[0] = '\0';
         execute_commit(rt, &head, &commit_result);
     }
-    conclusion = commit_result.trits[strlen(commit_result.trits) - 1];
+    {
+        int conclusion_pos = module_cell_count - 1;
+        if (conclusion_cell != NULL) {
+            conclusion_pos = -1;
+            for (int i = 0; i < module_cell_count; i++) {
+                if (strcmp(rt->cells[module_cells[i]].name, conclusion_cell) == 0) {
+                    conclusion_pos = i;
+                    break;
+                }
+            }
+            if (conclusion_pos < 0) {
+                fail("infer conclusion cell not found in module");
+            }
+        }
+        conclusion = commit_result.trits[conclusion_pos];
+    }
     if (strcmp(commit_result.status, "accepted") != 0) {
         verdict = "maybe";
     } else if (conclusion == '+') {
@@ -1792,9 +1807,10 @@ int main(int argc, char **argv) {
         run_replay(argv[2], argv[3]);
         return 0;
     }
-    if (argc == 5 && strcmp(argv[1], "infer") == 0) {
+    if ((argc == 5 || argc == 6) && strcmp(argv[1], "infer") == 0) {
         parse_source(&runtime, argv[2]);
-        run_infer(&runtime, argv[2], argv[3], argv[4]);
+        run_infer(&runtime, argv[2], argv[3], argv[4],
+                  argc == 6 ? argv[5] : NULL);
         return 0;
     }
     if (argc != 3) {
