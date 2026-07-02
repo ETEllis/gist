@@ -1,0 +1,13 @@
+# The mechanism of this repository is the native .cdc under native/.
+# GitHub's linguist has no grammar for .cdc, so language statistics cannot
+# display it; the attributes below keep the bar from misrepresenting the
+# project as a Python/C codebase.
+
+# vendored BiDi micro-bridge (upstream: ETEllis/bidi-coherence-delta-calculus)
+runtime/** linguist-vendored
+
+# training harness: support tooling around the native mechanism, not the
+# product (trains against native-runtime labels; exports back to .cdc)
+torchcdc/** linguist-vendored
+
+*.cdc linguist-detectable

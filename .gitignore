@@ -8,3 +8,6 @@ torchcdc/build/parity_check.cdc
 paper/main.aux
 paper/main.log
 gist-demo-session/
+
+# non-shipped construction oracle (local only, per project constraint)
+oracle/

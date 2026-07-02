@@ -36,9 +36,28 @@ FLOW_STEPS = 12
 BATCH_MODULES = 32
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_RT = os.path.normpath(os.path.join(
-    _HERE, "..", "..", "bidi-coherence-delta-calculus", "build",
-    "cdc_native_runtime"))
+
+
+def _find_runtime():
+    """Prefer the repo's vendored (extended) bridge; build it if needed;
+    fall back to a sibling BiDi checkout (development layout)."""
+    vendored_dir = os.path.normpath(os.path.join(_HERE, "..", "runtime"))
+    vendored = os.path.join(vendored_dir, "build", "cdc_native_runtime")
+    if os.path.exists(os.path.join(vendored_dir, "cdc_native_runtime.c")):
+        if not os.path.exists(vendored):
+            os.makedirs(os.path.dirname(vendored), exist_ok=True)
+            subprocess.run(
+                ["cc", "-O2", "-o", vendored,
+                 os.path.join(vendored_dir, "cdc_native_runtime.c"),
+                 os.path.join(vendored_dir, "cdc_source.c"), "-lm"],
+                check=True)
+        return vendored
+    return os.path.normpath(os.path.join(
+        _HERE, "..", "..", "bidi-coherence-delta-calculus", "build",
+        "cdc_native_runtime"))
+
+
+DEFAULT_RT = _find_runtime()
 
 
 def _rng_stream(seed: int):
