@@ -11,15 +11,15 @@ cell net.c2 module=net theta=1.5707963267948966 amplitude=1.0 omega=0.0
 cell net.c3 module=net theta=1.5707963267948966 amplitude=1.0 omega=0.0
 cell net.c4 module=net theta=1.5707963267948966 amplitude=1.0 omega=0.0
 cell net.c5 module=net theta=1.5707963267948966 amplitude=1.0 omega=0.0
-channel net.c0 -> net.c3 weight=0.500000000000 delay=0.0 angle=0.000000000000 lines=1
-channel net.c1 -> net.c3 weight=0.500000000000 delay=0.0 angle=0.000000000000 lines=1
-channel net.c1 -> net.c5 weight=0.500000000000 delay=0.0 angle=0.000000000000 lines=1
-channel net.c2 -> net.c5 weight=0.500000000000 delay=0.0 angle=0.000000000000 lines=1
-channel net.c3 -> net.c4 weight=0.500000000000 delay=0.0 angle=0.000000000000 lines=1
-channel net.c5 -> net.c4 weight=0.500000000000 delay=0.0 angle=0.000000000000 lines=1
-flow layer0 field=nn-run duration=1.000000000000
-flow layer1 field=nn-run duration=1.000000000000
-flow layer2 field=nn-run duration=1.000000000000
-flow layer3 field=nn-run duration=1.000000000000
+channel net.c0 -> net.c3 weight=0.602280804744 delay=0.0 angle=-0.005661895841 lines=1
+channel net.c1 -> net.c3 weight=0.684937695439 delay=0.0 angle=0.171077993634 lines=1
+channel net.c1 -> net.c5 weight=0.782705687186 delay=0.0 angle=0.144708797419 lines=1
+channel net.c2 -> net.c5 weight=0.971518577176 delay=0.0 angle=0.124859374234 lines=1
+channel net.c3 -> net.c4 weight=1.556457285403 delay=0.0 angle=0.102983406415 lines=1
+channel net.c5 -> net.c4 weight=0.311520848448 delay=0.0 angle=-0.743348490338 lines=1
+flow layer0 field=nn-run duration=0.675893636949
+flow layer1 field=nn-run duration=0.675893636949
+flow layer2 field=nn-run duration=0.675893636949
+flow layer3 field=nn-run duration=0.675893636949
 commit verdict module=net
 nest pool parent=net child=net-child
