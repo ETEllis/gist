@@ -15,6 +15,11 @@ and trainable as the neural network it already is.*
 [![trained natively](https://img.shields.io/badge/trained_natively-0.933_held--out-orange)](BENCHMARKS.md)
 [![substrate](https://img.shields.io/badge/substrate-BiDi_CDC-black)](https://github.com/ETEllis/bidi-coherence-delta-calculus)
 
+<sub>*The mark is the mechanism: Sierpinski's triangle as the network's
+convolution filters — the lines are the flow, the open corner is the
+output aperture (the balanced-ternary `0`), and the gold point is the
+committed verdict at the end of the reduction.*</sub>
+
 </div>
 
 ---
