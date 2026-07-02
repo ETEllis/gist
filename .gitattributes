@@ -6,8 +6,4 @@
 # vendored BiDi micro-bridge (upstream: ETEllis/bidi-coherence-delta-calculus)
 runtime/** linguist-vendored
 
-# training harness: support tooling around the native mechanism, not the
-# product (trains against native-runtime labels; exports back to .cdc)
-torchcdc/** linguist-vendored
-
 *.cdc linguist-detectable

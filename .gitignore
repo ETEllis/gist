@@ -11,3 +11,6 @@ gist-demo-session/
 
 # non-shipped construction oracle (local only, per project constraint)
 oracle/
+
+# construction-tier training harness (local only; results quoted in paper)
+torchcdc/

@@ -6,10 +6,10 @@
 #include <string.h>
 
 #define MAX_FIELDS 16
-#define MAX_MODULES 64
-#define MAX_CELLS 256
-#define MAX_CHANNELS 256
-#define MAX_STEPS 128
+#define MAX_MODULES 1024
+#define MAX_CELLS 8192
+#define MAX_CHANNELS 8192
+#define MAX_STEPS 4096
 #define MAX_COMPILE_JOBS 32
 #define MAX_PROOF_JOBS 32
 #define MAX_COUNCILS 32
@@ -51,10 +51,12 @@ typedef struct {
     char name[64];
     char module[64];
     double theta;
+    double theta0;
     double amplitude;
     double omega;
     char latch;
     int has_latch;
+    int clamped;
 } Cell;
 
 typedef struct {
@@ -261,6 +263,7 @@ typedef struct {
     int policy_count;
     int bridge_count;
     int counter_count;
+    int plastic_enabled;
 } Runtime;
 
 static void fail(const char *message) {
@@ -404,6 +407,8 @@ static void add_cell(Runtime *rt, const char *line) {
     cdc_first_token_after(line, "cell ", cell->name, sizeof(cell->name));
     cdc_copy_attr(line, "module", cell->module, sizeof(cell->module), "");
     cell->theta = cdc_read_double_attr(line, "theta", 0.0);
+    cell->theta0 = cell->theta;
+    cell->clamped = 0;
     cell->amplitude = cdc_read_double_attr(line, "amplitude", 1.0);
     cell->omega = cdc_read_double_attr(line, "omega", 0.0);
     cell->latch = '0';
@@ -662,6 +667,10 @@ static void add_counter(Runtime *rt, const char *line) {
     counter->expect_value = cdc_read_int_attr(line, "expect-value", counter->value);
 }
 
+static void init_runtime_defaults(Runtime *rt) {
+    rt->plastic_enabled = 1;
+}
+
 static void parse_source(Runtime *rt, const char *path) {
     FILE *fp = fopen(path, "r");
     char line[LINE_MAX_BYTES];
@@ -669,6 +678,7 @@ static void parse_source(Runtime *rt, const char *path) {
         fail("could not open native reducer source");
     }
     memset(rt, 0, sizeof(*rt));
+    init_runtime_defaults(rt);
     while (fgets(line, sizeof(line), fp)) {
         cdc_strip_comment(line);
         if (line[0] == '\0' || strcmp(line, "end") == 0) {
@@ -757,7 +767,8 @@ static void execute_flow(Runtime *rt, Step *step, FlowResult *result) {
         int source_index;
         int target_index;
         double correlation;
-        if (!channel->plastic || channel->rate == 0.0) {
+        if (!channel->plastic || channel->rate == 0.0 ||
+            !rt->plastic_enabled) {
             continue;
         }
         source_index = find_cell_index(rt, channel->source);
@@ -775,7 +786,8 @@ static void execute_flow(Runtime *rt, Step *step, FlowResult *result) {
                            step->duration;
     }
     for (int i = 0; i < rt->cell_count; i++) {
-        if (cell_in_field(rt, &rt->cells[i], field->name)) {
+        if (cell_in_field(rt, &rt->cells[i], field->name) &&
+            !rt->cells[i].clamped) {
             rt->cells[i].theta = next_theta[i];
         }
     }
@@ -1526,8 +1538,8 @@ static void run_evolution(Runtime *rt, const char *path) {
 }
 
 static void collect_replay_data(const char *reducer_path, const char *surface_path, ReplayData *data) {
-    Runtime reducer;
-    Runtime surface;
+    static Runtime reducer;
+    static Runtime surface;
     int has_flow = 0;
     int has_accepted = 0;
     int has_held = 0;
@@ -1786,6 +1798,165 @@ static void run_infer(Runtime *rt, const char *path, const char *module_name,
            commit_result.status, commit_result.reason, path);
 }
 
+
+static int module_cell_indexes(Runtime *rt, Module *module,
+                               int *out, int max_out) {
+    int count = 0;
+    for (int i = 0; i < rt->cell_count; i++) {
+        if (strcmp(rt->cells[i].module, module->name) == 0) {
+            if (count < max_out) {
+                out[count] = i;
+            }
+            count++;
+        }
+    }
+    return count;
+}
+
+static void reset_module_cells(Runtime *rt, int *cells, int count) {
+    for (int i = 0; i < count; i++) {
+        rt->cells[cells[i]].theta = rt->cells[cells[i]].theta0;
+        rt->cells[cells[i]].clamped = 0;
+    }
+}
+
+static void run_net_flows(Runtime *rt) {
+    for (int i = 0; i < rt->step_count; i++) {
+        if (rt->steps[i].kind == STEP_FLOW) {
+            Step layer = rt->steps[i];
+            FlowResult flow_result;
+            layer.has_expect_theta = 0;
+            layer.has_expect_weight = 0;
+            execute_flow(rt, &layer, &flow_result);
+        }
+    }
+}
+
+static double eval_accuracy(Runtime *net, Runtime *scenes,
+                            int *net_cells, int net_cell_count,
+                            double deadband) {
+    int correct = 0;
+    int total = 0;
+    net->plastic_enabled = 0;
+    for (int s = 0; s < scenes->module_count; s++) {
+        Module *scene = &scenes->modules[s];
+        int scene_cells[8];
+        int sc = module_cell_indexes(scenes, scene, scene_cells, 8);
+        if (sc < 4) {
+            continue;
+        }
+        reset_module_cells(net, net_cells, net_cell_count);
+        for (int i = 0; i < 3; i++) {
+            net->cells[net_cells[i]].theta =
+                scenes->cells[scene_cells[i]].theta;
+        }
+        run_net_flows(net);
+        {
+            char predicted = trit_from_theta(
+                net->cells[net_cells[net_cell_count - 1]].theta, deadband);
+            char label = trit_from_theta(
+                scenes->cells[scene_cells[3]].theta, deadband);
+            if (predicted == label) {
+                correct++;
+            }
+            total++;
+        }
+    }
+    net->plastic_enabled = 1;
+    if (total == 0) {
+        fail("train: no usable scenes (need 4-cell scene modules)");
+    }
+    return (double)correct / (double)total;
+}
+
+static void write_learned(Runtime *net, const char *net_path,
+                          const char *out_path) {
+    FILE *in = fopen(net_path, "r");
+    FILE *out = fopen(out_path, "w");
+    char line[LINE_MAX_BYTES];
+    int channel_cursor = 0;
+    if (!in || !out) {
+        fail("train: could not open net source or output");
+    }
+    fprintf(out, "# learned natively: clamped-teacher plasticity through "
+                 "flow (cdc_native_runtime train)\n");
+    while (fgets(line, sizeof(line), in)) {
+        char probe[LINE_MAX_BYTES];
+        snprintf(probe, sizeof(probe), "%s", line);
+        cdc_strip_comment(probe);
+        cdc_trim(probe);
+        if (cdc_starts_with(probe, "channel ") &&
+            channel_cursor < net->channel_count) {
+            Channel *channel = &net->channels[channel_cursor++];
+            fprintf(out,
+                    "channel %s -> %s weight=%.12f delay=%.6f angle=%.12f "
+                    "lines=%s plastic=%d rate=%.6f\n",
+                    channel->source, channel->target, channel->weight,
+                    channel->delay, channel->angle, channel->lines,
+                    channel->plastic, channel->rate);
+        } else {
+            fputs(line, out);
+        }
+    }
+    fclose(in);
+    fclose(out);
+}
+
+static void run_train(const char *net_path, const char *module_name,
+                      const char *scenes_path, int epochs,
+                      const char *out_path) {
+    static Runtime net;
+    static Runtime scenes;
+    Module *module;
+    Field *field;
+    int net_cells[MAX_CELLS];
+    int net_cell_count;
+    parse_source(&net, net_path);
+    parse_source(&scenes, scenes_path);
+    module = find_module(&net, module_name);
+    if (!module) {
+        fail("train references unknown module");
+    }
+    field = find_field(&net, module->field);
+    if (!field) {
+        fail("train module has no field");
+    }
+    net_cell_count = module_cell_indexes(&net, module, net_cells, MAX_CELLS);
+    if (net_cell_count < 4) {
+        fail("train module needs at least 4 cells");
+    }
+    printf("train epoch=0 acc=%.4f (untrained)\n",
+           eval_accuracy(&net, &scenes, net_cells, net_cell_count,
+                         field->deadband));
+    for (int e = 0; e < epochs; e++) {
+        for (int s = 0; s < scenes.module_count; s++) {
+            Module *scene = &scenes.modules[s];
+            int scene_cells[8];
+            int sc = module_cell_indexes(&scenes, scene, scene_cells, 8);
+            if (sc < 4) {
+                continue;
+            }
+            reset_module_cells(&net, net_cells, net_cell_count);
+            for (int i = 0; i < 3; i++) {
+                net.cells[net_cells[i]].theta =
+                    scenes.cells[scene_cells[i]].theta;
+            }
+            /* clamp the conclusion at the teacher label: do()-style latch */
+            net.cells[net_cells[net_cell_count - 1]].theta =
+                scenes.cells[scene_cells[3]].theta;
+            net.cells[net_cells[net_cell_count - 1]].clamped = 1;
+            run_net_flows(&net);
+            net.cells[net_cells[net_cell_count - 1]].clamped = 0;
+        }
+        printf("train epoch=%d acc=%.4f\n", e + 1,
+               eval_accuracy(&net, &scenes, net_cells, net_cell_count,
+                             field->deadband));
+    }
+    write_learned(&net, net_path, out_path);
+    printf("native train ok epochs=%d scenes=%d learned=%s\n",
+           epochs, scenes.module_count, out_path);
+}
+
 static void usage(void) {
     fprintf(stderr, "usage:\n");
     fprintf(stderr, "  cdc_native_runtime run native_reducer.cdc\n");
@@ -1802,9 +1973,13 @@ static void usage(void) {
 
 #ifndef CDC_NATIVE_NO_MAIN
 int main(int argc, char **argv) {
-    Runtime runtime;
+    static Runtime runtime;
     if (argc == 4 && strcmp(argv[1], "replay") == 0) {
         run_replay(argv[2], argv[3]);
+        return 0;
+    }
+    if (argc == 7 && strcmp(argv[1], "train") == 0) {
+        run_train(argv[2], argv[3], argv[4], atoi(argv[5]), argv[6]);
         return 0;
     }
     if ((argc == 5 || argc == 6) && strcmp(argv[1], "infer") == 0) {

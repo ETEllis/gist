@@ -56,6 +56,10 @@ echo "--- native learning: plastic weights follow correlation ---"
 "$RT" run       gist_learn.cdc | tail -1
 echo "--- native inference: weights.cdc + input word -> ternary verdict ---"
 "$RT" infer     gist_neural.cdc net '++-'
+echo "--- native TRAINING: clamped-teacher plasticity through flow ---"
+"$RT" train gist_train_net.cdc net gist_scenes_train.cdc 10 build/gist_trained_check.cdc | tail -2
+echo "held-out:" && "$RT" train build/gist_trained_check.cdc net gist_scenes_test.cdc 0 /dev/null | head -1
+"$RT" infer gist_trained.cdc net '++-'
 echo "--- emergent 64-gate surface ---"
 "$RT" surface   gist_gate.cdc | tail -1
 echo "--- meta-gate ladder council + decision-stamp self-evolution ---"

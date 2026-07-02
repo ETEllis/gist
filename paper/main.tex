@@ -218,13 +218,23 @@ singular conclusion on \emph{all} 27 ternary input words ($27/27$).
 The same runtime that verifies the mechanism runs the trained model:
 \texttt{./run.sh '+0-'}.
 
-\paragraph{Learning is native.} The runtime extension also executes CDC's
+\paragraph{Training is native.} The runtime extension executes CDC's
 declared plasticity: channels marked \texttt{plastic} follow phase
 correlation through flow ($w\mathrel{+}=r(\cos(\theta_{src}{-}
 \theta_{dst})-w)\,d$), witnessed by \texttt{gist\_learn.cdc} (a weak
 channel learns an alignment, $0.10\to0.76$ in two steps, to $10^{-5}$).
-Gradient training is thus a harness-side refinement of a capacity the
-substrate itself possesses.
+On top of it the runtime's \texttt{train} command implements
+clamped-teacher learning with no host code at all: the conclusion cell is
+latched at the label pole (a do()-style clamp) while plasticity adapts the
+weights through ordinary flow. Datasets are \texttt{.cdc} files whose
+labels the runtime's own converged reduction computed; learned weights are
+written back as \texttt{.cdc}. On the anticipation task (two flow layers
+against a forty-step converged oracle), native training lifts held-out
+accuracy from $0.813$ to $\mathbf{0.933}$ ($400$ training scenes, $10$
+epochs, deterministic). The shipped repository trains, evaluates, and
+infers entirely through the calculus and its C bridge; the gradient-based
+hybrid results above are construction-tier reference experiments whose
+harness deliberately stays out of the repository.
 
 \section{Adapters and integration surfaces}
 
